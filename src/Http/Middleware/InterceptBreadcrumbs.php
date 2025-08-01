@@ -62,7 +62,7 @@ class InterceptBreadcrumbs {
         }
     }
 
-    protected function getBreadcrumbs(NovaRequest $request) {
+    protected function getBreadcrumbs(NovaRequest $request) { 
         $breadcrumbs = Breadcrumbs::make(null)->build($request);
         return $breadcrumbs;
     }
