@@ -60,8 +60,20 @@ class BreadcrumbServiceProvider extends ServiceProvider {
                 $parentResource = $request->findParentResource();
                 return [
                     Breadcrumb::make(__('Home'), '/'),
-                    // Breadcrumb for parent resource index or detail
+                    // Parent resource breadcrumb
                     Breadcrumb::resource($parentResource),
+                    $crumb,
+                ];
+            }
+            return [$crumb];
+        });
+        // Detail callback: include parent resource when accessing via HasMany relationship
+        Breadcrumbs::detailCallback(function(NovaRequest $request, Breadcrumbs $breadcrumbs, $crumb) {
+            if ($relation = $request->viaRelationship()) {
+                $parent = $request->findParentResource();
+                return [
+                    Breadcrumb::make(__('Home'), '/'),
+                    Breadcrumb::resource($parent),
                     $crumb,
                 ];
             }
