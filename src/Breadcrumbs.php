@@ -197,9 +197,10 @@ class Breadcrumbs extends NovaBreadcrumbs {
         }
 
         if ($type === "attach") {
-            $relatedResourceClass = $request->relatedResource();
+            // Show only Home and Attach breadcrumb
+            $home = Breadcrumb::make(__("Home"), '/');
             return [
-                Breadcrumb::indexResource($relatedResourceClass),
+                $home,
                 Breadcrumb::make(__("Attach")),
             ];
         }
