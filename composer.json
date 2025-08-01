@@ -1,0 +1,38 @@
+{
+    "name": "elsed115/nova-breadcrumbs",
+    "description": "A Laravel Nova package to extend the capabilities of the first party Nova Breadcrumbs",
+    "homepage": "https://github.com/elsed115/nova-breadcrumbs",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "nova",
+        "breadcrumbs"
+    ],
+    "require": {
+        "php": "^7.4|^8",
+        "laravel/nova": "^4.19"
+    },
+    "autoload": {
+        "psr-4": {
+            "Elsed115\\Breadcrumbs\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Elsed115\\Breadcrumbs\\BreadcrumbServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://nova.laravel.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
