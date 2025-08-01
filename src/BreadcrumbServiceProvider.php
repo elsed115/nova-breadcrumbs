@@ -52,6 +52,21 @@ class BreadcrumbServiceProvider extends ServiceProvider {
 
             return $new;
         });
+        // Default index callback: include parent resource for HasMany relationships
+        Breadcrumbs::indexCallback(function(NovaRequest $request, Breadcrumbs $breadcrumbs, $crumb) {
+            // If accessing via a relationship (e.g., HasMany)
+            if ($relation = $request->viaRelationship()) {
+                // Parent Nova resource instance
+                $parentResource = $request->findParentResource();
+                return [
+                    Breadcrumb::make(__('Home'), '/'),
+                    // Breadcrumb for parent resource index or detail
+                    Breadcrumb::resource($parentResource),
+                    $crumb,
+                ];
+            }
+            return [$crumb];
+        });
     }
 
     /**
