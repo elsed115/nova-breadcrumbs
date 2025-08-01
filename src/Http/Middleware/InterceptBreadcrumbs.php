@@ -33,8 +33,7 @@ class InterceptBreadcrumbs {
             ? $request
             : NovaRequest::createFrom($request);
         $path = $request->getPathInfo();
-        // Skip only breadcrumb middleware for create Nova requests (allow attach pages to be intercepted)
-        if ($novaRequest->isCreateRequest()) {
+        if ($novaRequest->isCreateOrAttachRequest() || strpos($path, '/attach/') !== false) {
             return $next($request);
         }
 
