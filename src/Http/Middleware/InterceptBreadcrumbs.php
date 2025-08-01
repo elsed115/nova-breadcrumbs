@@ -54,7 +54,13 @@ class InterceptBreadcrumbs {
             }
 
             $responsePage['props'] ??= [];
-            $responsePage['props']['breadcrumbs'] = $this->getBreadcrumbs($request);
+            // Get breadcrumbs and remove default resource index crumb (path starting with /resources/)
+            $breadcrumbs = $this->getBreadcrumbs($request);
+            $filtered = array_values(array_filter($breadcrumbs, function($crumb) {
+                // keep home (path '/') and any crumb not linking to resources index
+                return $crumb->path === '/' || ! str_starts_with($crumb->path, '/resources/');
+            }));
+            $responsePage['props']['breadcrumbs'] = $filtered;
 
             return Inertia::render($responsePage['component'], $responsePage['props']);
         } else {
