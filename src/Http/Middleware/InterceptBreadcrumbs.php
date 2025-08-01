@@ -33,7 +33,7 @@ class InterceptBreadcrumbs {
             ? $request
             : NovaRequest::createFrom($request);
         $path = $request->getPathInfo();
-        if ($novaRequest->isCreateOrAttachRequest() || strpos($path, '/attach/') !== false) {
+        if ($novaRequest->isCreateOrAttachRequest() || strpos($path, '/attach/') !== false || strpos($path, '/edit-attached/') !== false) {
             return $next($request);
         }
 
