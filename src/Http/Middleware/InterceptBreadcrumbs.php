@@ -54,9 +54,16 @@ class InterceptBreadcrumbs {
             }
 
             $responsePage['props'] ??= [];
-            // Get breadcrumbs and remove default resource index crumb (path starting with /resources/)
-            $breadcrumbs = $this->getBreadcrumbs($request);
-            $filtered = array_values(array_filter($breadcrumbs, function($crumb) {
+            // Get breadcrumbs as array and remove default resource index crumb (path starting with /resources/)
+            $breadcrumbsList = $this->getBreadcrumbs($request);
+            if ($breadcrumbsList instanceof \Traversable) {
+                $breadcrumbsArray = iterator_to_array($breadcrumbsList, false);
+            } elseif (is_array($breadcrumbsList)) {
+                $breadcrumbsArray = $breadcrumbsList;
+            } else {
+                $breadcrumbsArray = [$breadcrumbsList];
+            }
+            $filtered = array_values(array_filter($breadcrumbsArray, function($crumb) {
                 // keep home (path '/') and any crumb not linking to resources index
                 return $crumb->path === '/' || ! str_starts_with($crumb->path, '/resources/');
             }));
