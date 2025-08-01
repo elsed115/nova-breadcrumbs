@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Nova\Events\ServingNova;
 use Laravel\Nova\Nova;
+use Illuminate\Support\Facades\Log;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
 class BreadcrumbServiceProvider extends ServiceProvider {
     /**
@@ -21,6 +23,35 @@ class BreadcrumbServiceProvider extends ServiceProvider {
         $this->publishes([
             __DIR__.'/../config/nova-breadcrumbs.php' => config_path('nova-breadcrumbs.php'),
         ], "nova-breadcrumbs-config");
+
+        // Default resource breadcrumbs callback: supports viaBreadcrumbs chain in URL
+        Breadcrumbs::resourceCallback(function(NovaRequest $request, Breadcrumbs $breadcrumbs, array $items) {
+            $new = [];
+            $viaBreadcrumbs = [];
+            Log::info('Nova breadcrumbs callback', [
+                'request' => $request->all(),
+                'items' => $items,
+            ]);
+
+            // 1. Check if viaBreadcrumbs chain passed in URL
+            if ($request->has('viaBreadcrumbs')) {
+                $viaBreadcrumbs = json_decode(base64_decode($request->query('viaBreadcrumbs')), true) ?? [];
+                // 2. Build each breadcrumb from the chain
+                foreach ($viaBreadcrumbs as $crumb) {
+                    $new[] = Breadcrumb::make($crumb['title'], $crumb['url']);
+                }
+            }
+
+            // 3. If no viaBreadcrumbs and default items >1, add the index link (penultimate default crumb)
+            if (empty($viaBreadcrumbs) && count($items) > 1) {
+                $new[] = $items[count($items) - 2];
+            }
+
+            // 4. Append the current resource crumb (e.g. resource name)
+            $new[] = end($items);
+
+            return $new;
+        });
     }
 
     /**
